@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex Academy | Sistema Elo PRO</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard-1.0.0.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard-1.0.0.min.css">
+
+<style>
+body{background:#0f172a;color:white;font-family:sans-serif}
+.glass{background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1)}
+.btn{padding:10px 16px;border-radius:12px;background:#3b82f6}
+</style>
+</head>
+<body class="p-6">
+
+<h1 class="text-3xl font-bold mb-6">♟️ Apex Academy - Sistema Elo Global</h1>
+
+<div class="grid md:grid-cols-3 gap-6">
+
+<!-- PERFIL -->
+<div class="glass p-6">
+<h2 class="text-xl mb-4">Perfil</h2>
+<p id="elo">ELO: 800</p>
+<p id="level">Nivel: Principiante</p>
+</div>
+
+<!-- TABLERO -->
+<div class="glass p-6">
+<h2 class="text-xl mb-4">Partida</h2>
+<div id="board" style="width:100%"></div>
+<button onclick="finishGame(true)" class="btn mt-2">Gané</button>
+<button onclick="finishGame(false)" class="btn mt-2">Perdí</button>
+</div>
+
+<!-- RANKING -->
+<div class="glass p-6">
+<h2 class="text-xl mb-4">Ranking</h2>
+<ul id="ranking"></ul>
+</div>
+
+</div>
+
+<script>
+
+let game = new Chess();
+let board = Chessboard('board', {draggable:true, position:'start'});
+
+let player = {name:'Jugador', elo:800};
+
+let players = [
+{name:'Jose',elo:1200},
+{name:'Maria',elo:950},
+{name:'Luis',elo:700}
+];
+
+function getLevel(elo){
+ if(elo<800) return 'Principiante';
+ if(elo<1200) return 'Intermedio';
+ return 'Avanzado';
+}
+
+function updateUI(){
+ elo.innerText = "ELO: "+player.elo;
+ level.innerText = "Nivel: "+getLevel(player.elo);
+ renderRanking();
+}
+
+function finishGame(win){
+ let change = win ? 25 : -20;
+ player.elo += change;
+ if(player.elo<100) player.elo=100;
+ updateUI();
+}
+
+function renderRanking(){
+ let all = [...players, player];
+ all.sort((a,b)=>b.elo-a.elo);
+ ranking.innerHTML='';
+ all.forEach(p=>{
+ ranking.innerHTML += `<li>${p.name} - ${p.elo}</li>`;
+ });
+}
+
+updateUI();
+
+</script>
+
+</body>
+</html>
